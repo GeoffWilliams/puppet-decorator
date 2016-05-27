@@ -4,20 +4,16 @@ Puppet::Type.type(:decorator).provide(:decorator) do
 
 
   def decorator
-    puts "I WOULD RUN LALALA"
-    # if we are supposed to run, just run each resource right now
+    # Iterate all passed in resource references if we have been told to run
     @resource[:before_refresh].any? { | reference |    
       # fetch the catalogue representation for each resource ref
       res = Puppet::Resource.new(reference)
       reference.catalog = resource.catalog
       resource_cat = reference.catalog.resource(res.to_s)
 
-      puts "set a resource to noop==false"
+      # turn off noop mode so the resource will run IN THE ORDER SPECIFIED
+      # IN THE MANIFEST!
       resource_cat.noop = false
-      #require 'pry'
-      #binding.pry
-      #puts "sending refresh"
-      #resource_cat.refresh
     }
   end
  
@@ -29,13 +25,11 @@ Puppet::Type.type(:decorator).provide(:decorator) do
     # WTF is this not needed?
     #resource_key = [reference.type, reference.name].join('/')
     resource_key = reference.name
-    puts resource_key
     resource_now = Puppet::Resource.indirection.find(resource_key)
     resource_now_ensure = resource_now.to_data_hash["parameters"][:ensure]
     resource_now_hash = resource_now.to_data_hash["parameters"]
 
-    puts "resource_now" + resource_now_ensure.to_s
-    fire=false
+    fire = false
 
     # lookup the DESIRED state of the resource in the catalog
     res = Puppet::Resource.new(reference)
@@ -45,14 +39,19 @@ Puppet::Type.type(:decorator).provide(:decorator) do
       fail("reference #{resource_key} was not found in the catalog")
     end  
   
+    # process each of the resource's properties (actions)
     resource_cat.properties.any? do |property|
+
+      # lookup what the corresponing property *is* right now on the system
+      # using the data from the first lookup
       is = resource_now_hash[property.name]
-      puts "want" + is.to_s
-      if property.should && !property.safe_insync?(resource_now_hash[property.name])
-	puts "FIRE!"
-        fire=true
+      if property.should && !property.safe_insync?(is)
+        # Puppet needs to do something to uplift this resource so we will fire!
+        fire = true
       end
     end
+    
+    # return
     fire
   end
 
