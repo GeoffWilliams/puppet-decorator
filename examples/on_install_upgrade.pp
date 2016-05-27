@@ -1,15 +1,17 @@
 decorator { "testing123":
-  resource   => Package['nmap-ncat.x86_64'],
+  resource   => Package['nmap-ncat'],
   before_refresh => Exec["boom"],
 }
 
 
-package { "nmap-ncat.x86_64":
-  ensure => latest,
+package { "nmap-ncat":
+  ensure => present,
+  #ensure => "1.2.4",
 }
 
 
 exec { "boom":
-  refreshonly => true,                                          # the exec only fires when it receives a refresh from package
-  command => '/bin/date > /tmp/log.txt'
+  noop => true,
+  command => '/bin/date > /tmp/log.txt',
+  before => Package["nmap-ncat"],
 }

@@ -26,8 +26,12 @@ Puppet::Type.newtype(:decorator) do
     end
   end
 
-  newparam(:before_refresh) do
+  newparam(:before_refresh, :array_matching => :all) do
     desc "Reference to resource to process before refresh"   
+   munge do |values|
+      values = [values] unless values.is_a? Array
+      values
+    end
   end
 
   # after refresh is not needed, just do notify or subscribe
