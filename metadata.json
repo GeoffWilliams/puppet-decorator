@@ -1,14 +1,13 @@
 {
-  "name": "geoffwilliams-decorator",
+  "name": "geoffwilliams-only_before_sync",
   "version": "0.1.0",
   "author": "geoffwilliams",
   "summary": "decorate a puppet resource with pre-update/post-update resources",
   "license": "Apache-2.0",
-  "source": "https://github.com/GeoffWilliams/puppet-decorator",
-  "project_page": "https://github.com/GeoffWilliams/puppet-decorator",
-  "issues_url": "https://github.com/GeoffWilliams/puppet-decorator/issues",
+  "source": "https://github.com/GeoffWilliams/puppet-only_before_sync",
+  "project_page": "https://github.com/GeoffWilliams/puppet-only_before_sync",
+  "issues_url": "https://github.com/GeoffWilliams/puppet-only_before_sync/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ],
   "data_provider": null
 }
