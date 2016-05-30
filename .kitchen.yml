@@ -1,27 +1,34 @@
 driver:
-  name: vagrant
+  name: docker
 
 provisioner:
   name: puppet_apply
   manifests_path: manifests
   modules_path: modules
   hiera_data_path: hieradata
-  custom_install_command: |
-    sudo ln -sf /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
-    sudo ln -sf /opt/puppetlabs/puppet/bin/facter /usr/local/bin/facter
-    sudo ln -sf /opt/puppetlabs/puppet/bin/hiera /usr/local/bin/hiera
 
 platforms:
   - name: centos-7
-    driver_plugin: vagrant
     driver_config:
-      box: puppetlabs/centos-7.0-64-puppet 
-      box_url: "https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-puppet"
-
+      image: "geoffwilliams/puppet:2016.1.2-0"
+      platform: rhel
+      build_context: true
+      provision_command:
+        - ln -sf /opt/puppetlabs/puppet/bin/puppet /usr/bin/puppet
+        - ln -sf /opt/puppetlabs/puppet/bin/facter /usr/bin/facter
+        - ln -sf /opt/puppetlabs/puppet/bin/hiera /usr/bin/hiera       
+ 
 suites:
   - name: first_run
     provisioner:
-        manifest: ../modules/only_before_sync/examples/only_before_sync.pp
+      manifest: ../modules/only_before_sync/examples/only_before_sync.pp
   - name: second_run
     provisioner:
-        manifest: ../modules/only_before_sync/examples/only_before_sync_second_run.pp
+      puppet_apply_command: |
+        export MANIFESTDIR='/tmp/kitchen/manifests'; 
+        sudo -E puppet apply /tmp/kitchen/manifests/../modules/only_before_sync/examples/only_before_sync.pp --modulepath=/tmp/kitchen/modules --fileserverconfig=/tmp/kitchen/fileserver.conf 
+        sudo -E puppet apply /tmp/kitchen/manifests/../modules/only_before_sync/examples/only_before_sync_second_run.pp --modulepath=/tmp/kitchen/modules --fileserverconfig=/tmp/kitchen/fileserver.conf 
+
+#      custom_install_command: puppet apply /tmp/kitchen/modules/only_before_sync/examples/only_before_sync.pp
+
+#      manifest: ../modules/only_before_sync/examples/only_before_sync_second_run.pp

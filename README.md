@@ -75,8 +75,7 @@ This project is complete with acceptance tests written using:
 * [Kitchen-Puppet](https://github.com/neillturner/kitchen-puppet)
 * [Bats](https://github.com/sstephenson/bats)
 
-Tests currently use VirtualBox and Vagrant so you will need those setup on
-the machine you are testing from.
+Tests currently use Docker so you will need this setup on the machine you are testing from.
 
 DO NOT RUN TESTS FROM A PUPPET MASTER!
 

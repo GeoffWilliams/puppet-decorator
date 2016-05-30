@@ -3,6 +3,15 @@
   rpm -q nmap-ncat
 }
 
+@test 'previous puppet run log file 1/2' {
+  ls /tmp/exec.txt
+}
+
+@test 'previous puppet run log file 2/2' {
+  ls /tmp/demo.txt
+}
+
+
 # --- second run ---
 @test 'second puppet run attempted/completed' {
   ls /tmp/second_run_completed.txt 

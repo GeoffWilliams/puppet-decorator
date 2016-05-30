@@ -12,6 +12,7 @@ gem 'beaker-rspec', '>= 5.3.0'
 gem 'test-kitchen'
 gem 'kitchen-puppet'
 gem 'busser'
+gem 'kitchen-docker'
 
 # rspec must be v2 for ruby 1.8.7
 if RUBY_VERSION >= '1.8.7' and RUBY_VERSION < '1.9'
