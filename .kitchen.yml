@@ -1,0 +1,27 @@
+driver:
+  name: vagrant
+
+provisioner:
+  name: puppet_apply
+  manifests_path: manifests
+  modules_path: modules
+  hiera_data_path: hieradata
+  custom_install_command: |
+    sudo ln -sf /opt/puppetlabs/puppet/bin/puppet /usr/local/bin/puppet
+    sudo ln -sf /opt/puppetlabs/puppet/bin/facter /usr/local/bin/facter
+    sudo ln -sf /opt/puppetlabs/puppet/bin/hiera /usr/local/bin/hiera
+
+platforms:
+  - name: centos-7
+    driver_plugin: vagrant
+    driver_config:
+      box: puppetlabs/centos-7.0-64-puppet 
+      box_url: "https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-puppet"
+
+suites:
+  - name: first_run
+    provisioner:
+        manifest: ../modules/only_before_sync/examples/only_before_sync.pp
+  - name: second_run
+    provisioner:
+        manifest: ../modules/only_before_sync/examples/only_before_sync_second_run.pp

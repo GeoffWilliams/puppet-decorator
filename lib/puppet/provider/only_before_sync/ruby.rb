@@ -41,7 +41,6 @@ Puppet::Type.type(:only_before_sync).provide(:ruby) do
       # lookup what the corresponing property *is* right now on the system
       # using the data from the first lookup
       is = resource_now_hash[property.name]
-      puts is
       if property.should && !property.safe_insync?(is)
         # Puppet needs to do something to uplift this resource so we will fire!
         fire = true

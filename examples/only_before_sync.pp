@@ -1,22 +1,35 @@
+
+# The package to install that we will attach our exec resources to
+# notice that it is before all other resources even though it needs
+# to be processed internally _last_.  The type and provider will 
+# reorder the graph at compile time to take care of this
 package { "nmap-ncat":
   ensure => present,
 }
 
-exec { "boom":
+
+# Query RPM to verify that the package is not installed yet.  This
+# proves that the package resource has not yet been processed
+exec { "before_package_installed":
   noop    => true,
-  command => '/bin/date > /tmp/log.txt',
+  command => '/bin/rpm -q nmap-ncat > /tmp/exec.txt',
+  returns => 1,
 }
 
-# implies `before` on exec resource
+# Make our 2 exec resources run before package installation only
+# if an upgrade/install is happening.  You can add multiple resources
+# by using an array.  All resources *MUST* be marked as noop in your
+# puppet code.  The provider works by turning off noop mode for the 
+# resource if a sync is required
 only_before_sync { "testing123":
   resource    => Package['nmap-ncat'],
   before_sync => [
-    Exec["boom"], 
-    Exec["boom2"] 
+    Exec["before_package_installed"], 
+    Exec["demo"] 
   ],
 }
 
-exec { "boom2":
+exec { "demo":
   noop    => true,
-  command => "/bin/uname >> /tmp/log.txt",
+  command => "/bin/date > /tmp/demo.txt",
 }
