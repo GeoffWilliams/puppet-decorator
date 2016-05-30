@@ -60,24 +60,46 @@ fancy stuff with your module here. It's especially helpful if you include usage
 examples and code samples for doing things with your module.
 
 ## Reference
-
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+### `only_before_sync`
+Custom type and provider to allow running resources before another resource is synced
 
 ## Limitations
-
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+* Not supported by Puppet
 
 ## Development
+Pull Requests welcome
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+## Testing
+This project is complete with acceptance tests written using:
+* [Test Kitchen](http://kitchen.ci)
+* [Kitchen-Puppet](https://github.com/neillturner/kitchen-puppet)
+* [Bats](https://github.com/sstephenson/bats)
 
-## Release Notes/Contributors/Etc. **Optional**
+Tests currently use VirtualBox and Vagrant so you will need those setup on
+the machine you are testing from.
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+DO NOT RUN TESTS FROM A PUPPET MASTER!
+
+To run them tests, first prepare your system:
+```shell
+bundle install
+```
+
+You may then prepare a test system by running:
+```shell
+bundle exec kitchen create
+```
+
+Puppet will be run every time you execute:
+```shell
+bundle exec kitchen converge
+```
+
+The results of running puppet can then be captured by:
+```shell
+bundle exec kitchen verify
+```
+
+It is suggested to have your CI server execute these tests before allowing code
+to be published to the puppet master
+
