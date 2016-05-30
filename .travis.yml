@@ -2,8 +2,8 @@
 sudo: required
 services:
   - docker
-before_install:
- - sudo bash -c "curl -sSL https://get.docker.com/ | sh"
+#before_install:
+# - sudo bash -c "curl -sSL https://get.docker.com/ | sh"
 language: ruby
 bundler_args: --without development
 script: "bundle install && bundle exec kitchen converge && bundle exec kitchen verify"
