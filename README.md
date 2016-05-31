@@ -14,7 +14,7 @@
 1. [Development - Guide for contributing to the module](#development)
 
 ## Description
-only_before_sync allows you to designate specific resources to run ONLY when a resources is scheduled to be synced (run).
+`only_before_sync` allows you to designate specific resources to run ONLY when a resources is scheduled to be synced (run).
 
 Practically, this module lends itself to tasks such as running scripts _before_ a particular package is installed or upgraded.
 
@@ -124,7 +124,7 @@ exec { "demo":
 }
 ```
 
-Key steps/features
+### Key steps/features
 * Define the resources that you wish to conditionally run and set their `noop`
   parameter (the `exec` resources)
 * Add the main resource (the `package`)
