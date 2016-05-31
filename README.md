@@ -35,8 +35,8 @@ start                                                         c   c   o
   V                                                           t   m
 validate parameters and catalog                               a   p   m
   |                                                           l   i   a
-  V                                                           g   l   s
-reorder catalog resources                                         e   t
+  V                                                           o   l   s
+reorder catalog resources                                     g   e   t
   |                                                                   e
   |                                                                   r
   |
