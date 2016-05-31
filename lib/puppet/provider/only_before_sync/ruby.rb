@@ -5,43 +5,18 @@ Puppet::Type.type(:only_before_sync).provide(:ruby) do
 
   def only_before_sync
     # Iterate all passed in resource references if we have been told to run
-    @resource[:before_sync].any? { | reference |    
-      # fetch the catalogue representation for each resource ref
-
-      puts reference.noop 
-      puts "XXXXXXXXXXX"
-
-
-      resource_key = [reference.type, reference.name].join('/')
-#      resource_now = Puppet::Resource.indirection.find(resource_key)
-  
-#     res = Puppet::Resource.new(resource_key)
-#      reference.catalog = resource.catalog
-#      resource_cat = reference.catalog.resource(res.to_s)
-
+    @resource[:before_sync].any? { | res |    
       # turn off noop mode so the resource will run IN THE ORDER SPECIFIED
       # IN THE MANIFEST!
-#      resource_cat.noop = false
-      reference.noop = false
+      res.noop = false
     }
   end
  
   def only_before_sync?
     reference = @resource[:resource]
-        puts @resource[:resource].class.name
-
-
-    catalog_resource = @resource[:resource]
-    name = catalog_resource.name
-    type = catalog_resource.type
-
-
-    # lookup the CURRENT state of the resource on the system
- 
-    # WTF is this not needed?
     resource_key = [reference.type, reference.name].join('/')
 
-
+    # lookup the CURRENT state of the resource on the system
     resource_now = Puppet::Resource.indirection.find(resource_key)
     resource_now_ensure = resource_now.to_data_hash["parameters"][:ensure]
     resource_now_hash = resource_now.to_data_hash["parameters"]
@@ -51,7 +26,7 @@ Puppet::Type.type(:only_before_sync).provide(:ruby) do
     res = Puppet::Resource.new(reference)
     reference.catalog = resource.catalog
     resource_cat = reference.catalog.resource(res.to_s)
-  puts "MARK_A"
+
     # process each of the resource's properties (actions)
     resource_cat.properties.any? do |property|
 
@@ -63,7 +38,6 @@ Puppet::Type.type(:only_before_sync).provide(:ruby) do
         fire = true
       end
     end
-puts "LEAVING PREHCEK"    
     # return
     fire
   end
