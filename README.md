@@ -14,30 +14,69 @@
 1. [Development - Guide for contributing to the module](#development)
 
 ## Description
+only_before_sync allows you to designate specific resources to run ONLY when a resources is scheduled to be synced (run).
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+Practically, this module lends itself to tasks such as running scripts _before_ a particular package is installed or upgraded.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+### How it works
+A regular puppet resource will normally self-determine if it needs to sync (run) and will then perform the required actions as a single step.
+
+This module works by front-loading this process with a test to see if the resource needs to sync and then enables and executes the conditional resources.
+
+Each instance of this resource needs to be configured with:
+* `resource` - the main resource that we are testing against
+* `before_sync` - Puppet resources to enable and process if `resource` needs sync.  These must each be put in `noop` mode.  If this module determines that `resource` will sync, they will be enabled and then processed naturally as part of the Puppet run
+
+Graphically, the following procedure looks like this:
+
+```
+start                                                         c   c   o
+  |                                                           a   o   n
+  V                                                           t   m
+validate parameters and catalog                               a   p   m
+  |                                                           l   i   a
+  V                                                           g   l   s
+reorder catalog resources                                         e   t
+  |                                                                   e
+  |                                                                   r
+  |
+..|.............................................................................
+  |
+catalog produced and control passed to agent
+  |
+..|.............................................................................
+  V
+<resource needs sync> --------------------------------        t   m
+  | yes                                              |        h   o
+  V                                                  |        i   d
+turn off noop mode for before_sync resources         |        s   u
+  |                                                  |            l
+  |                                                  |            e
+  |                                                  |
+..|..................................................|..........................
+  V                                                  |      
+agent naturally processes before_sync resources <-----        y   c
+  |                                                           o   o
+agent naturally processes main resource                       u   d
+    |                                                         r   e
+    |
+....|...........................................................................
+    V                                                           
+  <main resource needs sync>                                  n   t
+    | yes               | no                                  a   y
+    V                   V                                     t   p
+  sync main resource    stop                                  i   e
+    |                                                         v
+    V                                                         e  
+  stop
+
+```
 
 ## Setup
 
-### What only_before_sync affects **OPTIONAL**
-
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+### What only_before_sync affects
+The module doesn't control physical resources on the machine, only the
+manipulation of the final catalog
 
 ### Setup Requirements **OPTIONAL**
 
@@ -102,4 +141,3 @@ bundle exec kitchen verify
 
 It is suggested to have your CI server execute these tests before allowing code
 to be published to the puppet master
-

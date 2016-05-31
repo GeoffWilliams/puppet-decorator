@@ -81,17 +81,34 @@ Puppet::Type.newtype(:only_before_sync) do
 
   def pre_run_check
     # resource parameter must exist in catalog
-    retrieve_resource_reference(parameter(:resource).value)
+#    retrieve_resource_reference(parameter(:resource).value)
+ resource = parameter(:resource)
+
+    # replace value with resolved catalogue entity
+    resource.value = retrieve_resource_reference(parameter(:resource).value)
 
     # before_sync resources *MUST* specify noop in catalog
     # Validate and munge `prior_to`
-    before_sync = parameter(:before_sync).value
-    before_sync.each do |res|
-      resolved = retrieve_resource_reference(res)
-      if not resolved.noop?
-        self.fail "#{resolved} must be in noop mode to use only_before_sync resource"
+    before_sync = parameter(:before_sync)
+
+    before_sync.value.map! do |res|
+      begin
+        retrieve_resource_reference(res)
+      rescue ArgumentError => err
+        self.fail "Parameter prior_to failed: #{err} at #{@file}:#{@line}"
       end
     end
+
+
+    #before_sync.each do |res|
+    #  res.value = 
+    #  #resolved = retrieve_resource_reference(res)
+    #  if not resolved.noop?
+    #    self.fail "#{resolved} must be in noop mode to use only_before_sync resource"
+    #  else
+    #   # res.value = resolved
+    #  end
+    #end
 
 
   end
