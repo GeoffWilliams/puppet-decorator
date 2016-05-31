@@ -90,6 +90,9 @@ Puppet::Type.newtype(:only_before_sync) do
     # Validate and munge `prior_to`
     before_sync = parameter(:before_sync)
 
+
+    # REPLACE the value reference for each resource or we end up with just a
+    # a string in APPLY mode.
     before_sync.value.map! do |res|
       begin
         retrieve_resource_reference(res)
@@ -102,17 +105,6 @@ Puppet::Type.newtype(:only_before_sync) do
         self.fail "#{res} must be in noop mode to use only_before_sync resource"
       end
     end
-    #before_sync.each do |res|
-    #  res.value = 
-    #  #resolved = retrieve_resource_reference(res)
-    #  if not resolved.noop?
-    #    self.fail "#{resolved} must be in noop mode to use only_before_sync resource"
-    #  else
-    #   # res.value = resolved
-    #  end
-    #end
-
-
   end
 
   # Retrieves a resourcereference from the catalog.
